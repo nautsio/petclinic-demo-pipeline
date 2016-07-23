@@ -1,0 +1,16 @@
+node {
+   stage 'Checkout'
+   // Get some code from a GitHub repository
+   git url: 'https://github.com/pgoultiaev/spring-petclinic.git'
+
+   // Get the maven tool.
+   // ** NOTE: This 'M3' maven tool must be configured
+   // **       in the global configuration.           
+   def mvnHome = tool 'M3'
+
+   stage 'Unit test'
+   sh "${mvnHome}/bin/mvn test"
+   
+   stage 'Build'
+   sh "${mvnHome}/bin/mvn compile"   
+}

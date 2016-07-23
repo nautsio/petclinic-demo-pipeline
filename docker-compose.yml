@@ -1,0 +1,89 @@
+version: '2'
+
+networks:
+  prodnetwork:
+    driver: bridge
+
+services:
+ registry:
+  image: registry
+  ports:
+    - 5000:5000
+  networks:
+    - prodnetwork
+    
+ nexus:
+  image: sonatype/nexus:oss
+  ports:
+    - 8081:8081
+  networks:
+    - prodnetwork
+
+ jenkins:
+  build: ./jenkins
+  ports:
+    - 8080:8080
+  networks:
+    - prodnetwork
+  volumes:
+    - /var/run/docker.sock:/var/run/docker.sock
+    - /usr/bin/docker:/usr/bin/docker
+  depends_on:
+    - nexus
+    - sonar
+    - selhub
+  environment:
+    - NEXUS_PORT=8081
+    - SONAR_PORT=9000
+    - SONAR_DB_PORT=5432
+
+ sonar:
+  image: sonarqube
+  ports:
+   - 9092:9092
+   - 9000:9000
+  networks:
+    - prodnetwork
+  depends_on:
+    - sonardb
+  environment:
+   - SONARQUBE_JDBC_URL=jdbc:postgresql://sonardb:5432/sonar
+   - SONARQUBE_JDBC_USERNAME=sonar
+   - SONARQUBE_JDBC_PASSWORD=sonar
+
+ sonardb:
+  image: postgres
+  networks:
+    - prodnetwork
+  environment:
+   - POSTGRES_USER=sonar
+   - POSTGRES_PASSWORD=sonar
+
+ selhub:
+  image: selenium/hub
+  ports:
+    - 4444:4444
+  networks:
+    - prodnetwork
+
+ nodeff:
+  image: selenium/node-firefox
+  ports:
+    - 5900
+  networks:
+    - prodnetwork
+  environment:
+   - HUB_PORT_4444_TCP_ADDR=selhub
+  depends_on:
+    - selhub
+
+ nodechrome:
+  image: selenium/node-chrome
+  ports:
+    - 5900
+  networks:
+    - prodnetwork
+  environment:
+   - HUB_PORT_4444_TCP_ADDR=selhub
+  depends_on:
+    - selhub
