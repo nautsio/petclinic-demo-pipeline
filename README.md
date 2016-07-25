@@ -2,6 +2,11 @@
 
 This is a demo CD pipeline using docker to run everything.
 
+## Running
+
+```
+$ docker-compose up
+```
 
 ## What does this pipeline contain?
 

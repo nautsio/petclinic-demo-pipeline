@@ -44,11 +44,6 @@ def pipeline = """
    -Durl=http://nexus:8081/content/repositories/snapshots \
    -Dfile=target/petclinic.war"
 
-   stage 'build docker artifact'
-   sh "sudo docker build -t pgoultiaev/petclinic ."
-
-   //stage "run end2end tests"
-   //sh "\${mvnHome}/bin/mvn browsertest"
   }
 """
 
