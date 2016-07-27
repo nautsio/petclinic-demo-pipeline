@@ -44,6 +44,8 @@ def pipeline = """
    -Durl=http://nexus:8081/content/repositories/snapshots \
    -Dfile=target/petclinic.war"
 
+   stage 'build docker image'
+   sh "sudo docker build -t pgoultiaev/petclinic:\$(git rev-parse HEAD) ."
   }
 """
 
