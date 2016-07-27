@@ -7,7 +7,7 @@ COPY *.groovy /usr/share/jenkins/ref/init.groovy.d/
 
 USER root
 WORKDIR /usr/share/jenkins/ref/plugins/
-RUN install-plugins.sh   workflow-aggregator \
+RUN install-plugins.sh workflow-aggregator \
                        docker-workflow \
                        pipeline-utility-steps	\
                        pipeline-stage-view \
@@ -15,6 +15,11 @@ RUN install-plugins.sh   workflow-aggregator \
                        antisamy-markup-formatter \
                        matrix-auth \
                        sonar
+
+RUN apt-get update \
+    && apt-get install -y sudo \
+    && rm -rf /var/lib/apt/lists/*
+RUN echo "jenkins ALL=NOPASSWD: ALL" >> /etc/sudoers
 
 # See JENKINS-34035 - disable upgrade wizard
 RUN echo -n false > /usr/share/jenkins/ref/jenkins.install.runSetupWizard
