@@ -46,6 +46,11 @@ def pipeline = """
 
    stage 'build docker image'
    sh "sudo docker build -t pgoultiaev/petclinic:\$(git rev-parse HEAD) ."
+
+   stage 'UI test on docker instance'
+   sh "sudo docker run -d --name petclinic -p 9966:8080 --network demopipeline_prodnetwork pgoultiaev/petclinic:\$(git rev-parse HEAD)"
+   sh "\${mvnHome}/bin/mvn verify -Dgrid.server.url=http://selhub:4444/wd/hub/"
+   sh "sudo docker stop petclinic && sudo docker rm petclinic"
   }
 """
 
