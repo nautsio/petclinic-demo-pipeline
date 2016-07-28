@@ -55,4 +55,4 @@ project.definition = new CpsFlowDefinition(pipeline, true)
  * Example of a pipeline defined in a jenkinsfile in a git repository
  */
 def mp = Jenkins.instance.createProject(WorkflowMultiBranchProject.class, "pipeline-jenkinsfile")
-mp.getSourcesList().add(new BranchSource(new GitSCMSource(null, 'https://github.com/kishorebhatia/pipeline-as-code-demo', '', '*', "", false), new DefaultBranchPropertyStrategy(new BranchProperty[0])));
+mp.getSourcesList().add(new BranchSource(new GitSCMSource(null, 'https://github.com/pgoultiaev/spring-petclinic.git', '', '*', "", false), new DefaultBranchPropertyStrategy(new BranchProperty[0])));
