@@ -17,6 +17,7 @@ RUN install-plugins.sh workflow-aggregator \
                        sonar
 
 RUN apt-get update \
+    && apt-get install -y apache2-utils \
     && apt-get install -y sudo \
     && rm -rf /var/lib/apt/lists/*
 RUN echo "jenkins ALL=NOPASSWD: ALL" >> /etc/sudoers
