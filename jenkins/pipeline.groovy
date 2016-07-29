@@ -8,10 +8,20 @@ import jenkins.branch.DefaultBranchPropertyStrategy
 import jenkins.branch.BranchProperty
 
 
+def localPipelineName = 'pipeline-local'
+def jenkinsfilePipelineName = 'pipeline-jenkinsfile'
+
+// Remove pipelines if they already exist
+Jenkins.instance.items.each {
+  if (it.name.equals(localPipelineName) || it.name.equals(jenkinsfilePipelineName)) {
+    it.delete
+  }
+}
+
 /*
  * Example of a pipeline defined in a job
  */
-def project = Jenkins.instance.createProject(WorkflowJob.class, 'pipeline-local')
+def project = Jenkins.instance.createProject(WorkflowJob.class, localPipelineName)
 
 def pipeline = """
   node {
@@ -45,10 +55,10 @@ def pipeline = """
    -Dfile=target/petclinic.war"
 
    stage 'build docker image'
-   sh "sudo docker build -t pgoultiaev/petclinic:\$(git rev-parse HEAD) ."
+   sh "sudo docker build -t pgoultiaev/petclinic:\\\$(git rev-parse HEAD) ."
 
    stage 'UI test on docker instance'
-   sh "sudo docker run -d --name petclinic -p 9966:8080 --network demopipeline_prodnetwork pgoultiaev/petclinic:\$(git rev-parse HEAD)"
+   sh "sudo docker run -d --name petclinic -p 9966:8080 --network demopipeline_prodnetwork pgoultiaev/petclinic:\\\$(git rev-parse HEAD)"
    sh "\${mvnHome}/bin/mvn verify -Dgrid.server.url=http://selhub:4444/wd/hub/"
 
    stage 'Performance test on docker instance'
@@ -64,5 +74,5 @@ project.definition = new CpsFlowDefinition(pipeline, true)
 /*
  * Example of a pipeline defined in a jenkinsfile in a git repository
  */
-def mp = Jenkins.instance.createProject(WorkflowMultiBranchProject.class, "pipeline-jenkinsfile")
+def mp = Jenkins.instance.createProject(WorkflowMultiBranchProject.class, jenkinsfilePipelineName)
 mp.getSourcesList().add(new BranchSource(new GitSCMSource(null, 'https://github.com/pgoultiaev/spring-petclinic.git', '', '*', "", false), new DefaultBranchPropertyStrategy(new BranchProperty[0])));
