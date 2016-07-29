@@ -14,7 +14,8 @@ RUN install-plugins.sh workflow-aggregator \
                        git \
                        antisamy-markup-formatter \
                        matrix-auth \
-                       sonar
+                       sonar \
+                       scm-api
 
 RUN apt-get update \
     && apt-get install -y apache2-utils \
